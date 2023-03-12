@@ -59,6 +59,9 @@ nvim_lsp.lua_ls.setup {
       telemetry = {
         enable = false,
       },
+      completion = {
+        callSnippet = "Replace"
+      }
     },
   },
 }
