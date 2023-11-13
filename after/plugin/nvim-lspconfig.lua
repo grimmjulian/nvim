@@ -1,13 +1,34 @@
 -- Setup language servers.
 local lspconfig = require('lspconfig')
+
 lspconfig.pyright.setup {}
 lspconfig.tsserver.setup {}
+
 lspconfig.lua_ls.setup {
 	settings = {
-		diagnostics = {
-			globals = { "vim" }
-		}
-	}
+		Lua = {
+			runtime = {
+				-- Tell the language server which version of Lua you're using
+				-- (most likely LuaJIT in the case of Neovim)
+				version = 'LuaJIT',
+			},
+			diagnostics = {
+				-- Get the language server to recognize the `vim` global
+				globals = {
+					'vim',
+					'require'
+				},
+			},
+			workspace = {
+				-- Make the server aware of Neovim runtime files
+				library = vim.api.nvim_get_runtime_file("", true),
+			},
+			-- Do not send telemetry data containing a randomized but unique identifier
+			telemetry = {
+				enable = false,
+			},
+		},
+	},
 }
 
 lspconfig.r_language_server.setup {}
@@ -56,11 +77,5 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		end, opts)
 	end,
 })
-
-function on_save()
-	vim.lsp.buf.format()
-	MiniTrailspace.trim()
-	MiniTrailspace.trim_last_lines()
-end
 
 vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.format()]]
